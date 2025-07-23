@@ -31,7 +31,7 @@ def get_original_moment(y: list[int], n: int, r: int, a: int, weights_array: lis
 
 def calculate_moment(x: list[int], weights_array: list[int]) -> int:
     """
-    Takes a 0-indexed x and a 1-indexed weights_array.
+    Takes a 0-indexed x and a 1-indexed weights_array, and calculates M(x).
     """
     result = 0
     for i, bit in enumerate(x):
@@ -43,7 +43,7 @@ def calculate_weights(q: int, d: int, num_weights: int) -> list[int]:
     Returns a list such that w_i = weights_array[i].
     That means this is 1-indexed.
 
-    All weights up to w_{num_weights} are included
+    All weights up to w_{num_weights} are included.
     """
     p = q - 1
     weights_array = [0]
@@ -84,8 +84,7 @@ def longest_common_subsequence(a: list[int], b: list[int]) -> int:
     """
     Returns the length of the longest common subsequence of a and b.
     """
-    result_matrix : list[list[int]] = [] # we want result_matrix[i][j] to hold lcs(a[0:i+1], b[0:j+1])
-    # len(result_matrix) should be len(a) and len(result_matrix[i]) should be len(b)
+    result_matrix : list[list[int]] = []
     for i in range(len(a)):
         result_matrix.append([])
         for j in range(len(b)):
@@ -94,11 +93,13 @@ def longest_common_subsequence(a: list[int], b: list[int]) -> int:
             else:
                 result_matrix[i].append(max((result_matrix[i - 1][j] if i != 0 else 0), (result_matrix[i][j - 1] if j != 0 else 0)))
     return result_matrix[-1][-1]
+
 def first_common_subsequence(x: list[int], y: list[int], required_length: int) -> int:
     """
     Returns the minimum nonnegative v such that longest_common_subsequence(x, y[0:v]) >= required_length.
 
-    This is equivalent to the minimum nonnegative v such that longest_common_subsequence(x, y[0:v]) == required_length.
+    This is equivalent to the minimum nonnegative v such that longest_common_subsequence(x, y[0:v]) == required_length,
+    as proven in the appendix of the paper.
     Therefore, by applying the usual longest common subsequence algorithm, which involves computing the longest common
     subsequence of all pairs of (x[0:v_1], y[0:v_2]), we can find our answer in O(n^2) time.
 
@@ -109,7 +110,8 @@ def first_common_subsequence(x: list[int], y: list[int], required_length: int) -
         return 0
     print(f"Finding v for {x=}, {y=}, {required_length=}.")
     matrix = np.zeros(shape=(len(x), len(y))) # matrix[i][j] will hold the length of the longest common subsequence 
-                                              # of x[0:i + 1], y[0:j + 1]
+                                              # of x[0:i + 1], y[0:j + 1] (notation here refers to Python slicing; not the 
+                                              # notation in the paper, which is 1-indexed and inclusive at both ends)
     for i in range(len(x)):
         for j in range(len(y)):
             if x[i] == y[j]:
@@ -131,38 +133,20 @@ def compute_v(x: list[int], y: list[int], n: int, n_prime: int, d: int, a: int):
         return len(y) + 1
     return v
 
-# def compute_v(x: list[int], y: list[int], n: int, n_prime: int, d: int, a: int):
-#     b = d - a
-#     x_reversed = (x[n_prime - d - 1:])[::-1]
-#     y_reversed = y[::-1]
-#     result_matrix : list[list[int]] = []
-#     for i in range(len(y_reversed)):
-#         result_matrix.append([])
-#         for j in range(len(x_reversed)):
-#             if y_reversed[i] == x_reversed[j]:
-#                 result_matrix[i].append(1 + (result_matrix[i - 1][j - 1] if i != 0 and j != 0 else 0))
-#             else:
-#                 result_matrix[i].append(max((result_matrix[i - 1][j] if i != 0 else 0), (result_matrix[i][j - 1] if j != 0 else 0)))
-#             if result_matrix[i][j] >= n - n_prime + d - b:
-#                 return i + 1
-#     return len(y) + 1 # Means no such v exists.
-
 def do_hard_case(x: list[int], y: list[int], d: int, q: int, m: int, n: int, n_prime: int, a: int, lower_possible_value: int, weights_array: list[int]) -> tuple[bool, list[int]]:
     """
     If solved completely, returns (True, solution).
     If not solved completely, returns (True, []) if the higher value of x_{n_prime} is correct, and (False, []) if the lower value is correct.
-
-    Returns True if the higher value of x_{n_prime} is correct, and False if it is wrong.
     """
     b = d - a
     p = q - 1
     print(f"{q=}, {p=}, {d=}, {b=}, {a=}")
 
-    x_1 = [num for num in x] # This is not named in the paper. It means x in case 1.
+    x_1 = [num for num in x] 
     x_1[n_prime - 1] = lower_possible_value
     for num in range(n_prime - d + 1, n_prime):
         x_1[num - 1] = p
-    x_2 = [num for num in x] # This is not named in the paper. It means x in case 2.
+    x_2 = [num for num in x]
     x_2[n_prime - 1] = lower_possible_value + 1
     for num in range(n_prime - d + 1, n_prime):
         x_2[num - 1] = 0
@@ -234,15 +218,8 @@ def case_is_possible_step_1(possible_g: int, m_prime: int, weights_array: list[i
 
 
 def decode(y: list[int], n: int, q: int, d: int, r: int, debug=False) -> list[int]:
-    """
-    This implementation (including all variable names) is nearly faithful to the algorithm described 
-    in the paper. Any deviations (for speed or elegance) are marked in the code.
-    """
     global do_print_and_debug
     do_print_and_debug = debug
-
-
-    # Deviation from paper: q represents the size of the alphabet.
 
     assert d <= n # If d > n, then each codebook has only one string, which is not useful.
     if d == 1:
@@ -257,14 +234,14 @@ def decode(y: list[int], n: int, q: int, d: int, r: int, debug=False) -> list[in
     print(f"Original moment: {m}")
     p = q - 1
 
-    weights_sum_array = [0] * len(weights_array) # weights_sum_array[i] = sum_{j=1}^{i}w_i
+    weights_sum_array = [0] * len(weights_array) # weights_sum_array[i] = \sum_{j=1}^{i}w_i
     for num in range(1, len(weights_array)):
         weights_sum_array[num] = weights_array[num] + weights_sum_array[num - 1]
 
     x = [0] * n # Note: x is 0-indexed.
     n_prime = n
     while n_prime > 0:
-        m_prime = m - calculate_moment(x, weights_array) # Note: Recomputing m_prime from scratch like this is inefficient.
+        m_prime = m - calculate_moment(x, weights_array) # Note: Recomputing m_prime from scratch like this is inefficient, but simpler.
 
         print(f"Starting loop iteration with {n_prime=}, {m_prime=}")
         # STEP 1 BEGIN
@@ -273,14 +250,19 @@ def decode(y: list[int], n: int, q: int, d: int, r: int, debug=False) -> list[in
                                 weights_array=weights_array, weights_sum_array=weights_sum_array, n_prime=n_prime, p=p)
         higher_case_is_possible = case_is_possible_step_1(possible_g=lower_possible_value_of_x_n_prime + 1, m_prime=m_prime, 
                                 weights_array=weights_array, weights_sum_array=weights_sum_array, n_prime=n_prime, p=p)
+        # The above lines determine the set H. If lower_case_is_possible and higher_case_is_possible, 
+            # then H = {lower_possible_value_of_x_n_prime, lower_possible_value_of_x_n_prime + 1}
+            # If lower_case_is_possible and not higher_case_is_possible, then H = {lower_possible_value_of_x_n_prime}
+            # If not lower_case_is_possible and higher_case_is_possible, then H = {lower_possible_value_of_x_n_prime + 1}
         if lower_case_is_possible and higher_case_is_possible:
             # STEP 2 BEGIN
             print("Beginning step 2.")
             higher_case_correct, full_solution = do_hard_case(x=x, y=y, d=d, q=q, m=m, n=n, n_prime=n_prime, a=a, lower_possible_value=lower_possible_value_of_x_n_prime, weights_array=weights_array)
+            # The above function will make full_solution == [] if it does not find the entire codeword x
             if full_solution:
                 return full_solution
             if higher_case_correct:
-                x[n_prime - 1] = lower_possible_value_of_x_n_prime + 1
+                x[n_prime - 1] = lower_possible_value_of_x_n_prime + 1 # This is "n_prime - 1" instead of "n_prime" to compensate for being 0-indexed
                 for num in range(1, d):
                     x[n_prime - 1 - num] = 0
             else:
@@ -290,7 +272,7 @@ def decode(y: list[int], n: int, q: int, d: int, r: int, debug=False) -> list[in
             n_prime -= d
             # STEP 2 END
         else:
-            x[n_prime - 1] = lower_possible_value_of_x_n_prime + (0 if lower_case_is_possible else 1) # the -1 compensates for being 0 indexed
+            x[n_prime - 1] = lower_possible_value_of_x_n_prime + (0 if lower_case_is_possible else 1)
             n_prime -= 1
         # STEP 1 END
         print(f"One loop iteration complete; {x=}")
