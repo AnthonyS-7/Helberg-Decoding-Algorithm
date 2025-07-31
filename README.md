@@ -21,3 +21,5 @@ Specify the following parameters by writing them in the script:
 - log_file: The name of the file to write logs in. **If this file already exists, it will be overwritten.**
 
 To test the Deletions Algorithm, use the file test_program_deletions_nonbinary.py. The parameters are the same as above, except there is no specific_x.
+
+README.md creation date: Jul 16, 2025.
