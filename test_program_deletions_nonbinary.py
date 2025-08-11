@@ -1,30 +1,37 @@
-
 import itertools
 import csv
 import decode_d_deletion_error_non_binary_alphabet as decode_deletions
 
+# ---- Parameters Start ----
+
 n_min = 1
-n_max = 6
+n_max = 8
 d_min = 1
-d_max = 3
+d_max = 4
 q_min = 2
 q_max = 4
 
-n_range = range(n_min, n_max + 1)
-d_range = range(d_min, d_max + 1)
-q_range = range(q_min, q_max + 1)
+
+print_starting_new_x = True
+do_full_print = False
+assert print_starting_new_x or not do_full_print
 
 specific_x = []
-
-do_full_print = False
-do_any_print = True
-assert do_any_print or not do_full_print
-
 crash_on_fail = True
-failed_trials = []
-successful_trial_count = 0
 
 log_file = "log_deletions_non_binary_2.csv"
+
+# ---- Parameters End ----
+
+d_range = range(d_min, d_max + 1)
+n_range = range(n_min, n_max + 1)
+q_range = range(q_min, q_max + 1)
+successful_trial_count = 0
+failed_trials = []
+
+for i, x in enumerate(specific_x):
+    specific_x[i] = [int(num) for num in x]
+
 
 
 def test_deletion(deletion_indices: tuple, x: list[int], weights_array: list[int], q: int):
@@ -58,7 +65,7 @@ def test_deletion(deletion_indices: tuple, x: list[int], weights_array: list[int
         successful_trial_count += 1
 
 def test_x(x: list[int], weights_array: list[int], n: int, d: int, q: int):
-    if do_any_print:
+    if print_starting_new_x:
         print(f"Starting new x: {x}")
     for b in range(min(d + 1, n + 1)):
         delete_indices_list = itertools.combinations([num for num in range(0, n)], b)

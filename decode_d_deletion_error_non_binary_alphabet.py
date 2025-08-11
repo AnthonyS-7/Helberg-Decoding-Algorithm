@@ -103,7 +103,7 @@ def decode(y: list[int], m: int, d: int, q: int, n: int, do_print_and_debug_para
                 else:
                     shift_a_to_right_of_b(capital_p - c, capital_p, x_prime)
                     capital_p -= 1
-        elif weights_array[capital_p] < capital_i:
+        elif weights_array[capital_p] <= capital_i:
             sigma_max = min(q - 1, capital_i // (weights_array[capital_p] - weights_array[capital_p - c]))
             print(f"{sigma_max=}")
             if x_prime[capital_p - c - 1] > sigma_max:
@@ -120,14 +120,5 @@ def decode(y: list[int], m: int, d: int, q: int, n: int, do_print_and_debug_para
                     capital_p -= 1
             else:
                 shift_a_to_right_of_b(capital_p - c, capital_p, x_prime)
-                capital_p = capital_p - 1
-        else: # All deltas are 0 except for the one at index p, which is 1. Note this case was not described in the paper, and
-            # can probably be removed (and handled by changing the weights_array[capital_p] < capital_i to a <=)
-            x_prime[capital_p - 1] = 1
-            for i, num in enumerate(x_prime):
-                if num == -1:
-                    x_prime[i] = 0
-            capital_p = 0
-            c = 0
-    
+                capital_p = capital_p - 1    
     return x_prime

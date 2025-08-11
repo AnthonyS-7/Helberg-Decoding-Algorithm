@@ -10,25 +10,22 @@ d_max = 6
 q_min = 4
 q_max = 4
 
-print_starting_new_x = False
+print_starting_new_x = True
 do_full_print = False
-do_any_print = True
-assert do_any_print or not do_full_print
+assert print_starting_new_x or not do_full_print
 
-specific_x: list[str | list[int]] = [] #if non-empty, will test these values for x
+specific_x: list[str | list[int]] = []
 crash_on_fail = True
-failed_trials = []
-failed_a_b_info = set()
 
 log_file = "log_indels_nonbinary_4.csv"
 
 # --------------- Parameters End ---------------
 
-
 d_range = range(d_min, d_max + 1)
 n_range = range(n_min, n_max + 1)
 q_range = range(q_min, q_max + 1)
 successful_trial_count = 0
+failed_trials = []
 
 for i, x in enumerate(specific_x):
     specific_x[i] = [int(num) for num in x]
@@ -72,7 +69,6 @@ def test_insertion_deletion(insertion_indices: tuple, deletion_indices: tuple, x
                 print(f"{x=}")
                 print(f"{y=}")
                 print(f"{decoded_string=}")
-                failed_a_b_info.add((len(insertion_indices_list), len(deletion_indices_list)))
         else:
             successful_trial_count += 1
                  
