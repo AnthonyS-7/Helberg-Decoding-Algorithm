@@ -29,6 +29,7 @@ To test the Deletions Algorithm, use the file test_program_deletions_nonbinary.p
 
 ### Example Parameter Values
 
+```
 n_min = 1
 n_max = 8
 d_min = 1
@@ -45,9 +46,7 @@ specific_x = ["32000330", "31012310", "31120"]
 crash_on_fail = True
 
 log_file = "log_deletions_non_binary_2.csv"
-
----
-
+```
 
 
 README.md creation date: Jul 16, 2025.
